@@ -494,6 +494,12 @@ fn auto_setup(resource_dir: PathBuf, app_handle: tauri::AppHandle) {
         let _ = std::fs::write(&setup_marker, "done");
         eprintln!("[setup] setup complete, marker written");
 
+        macos_dialog(
+            "Ani-Mime",
+            "Setup complete!\n\nPlease open a new terminal tab or window for the tracking to take effect.",
+            &["OK"],
+        );
+
         let _ = app_handle.emit("status-changed", "searching");
     });
 }
