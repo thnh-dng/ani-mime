@@ -10,9 +10,8 @@
 
 <p align="center">
   <a href="https://github.com/vietnguyenhoangw/ani-mime/releases"><img src="https://img.shields.io/github/v/release/vietnguyenhoangw/ani-mime?style=for-the-badge&color=8b5cf6" alt="Version"></a>
-  <a href="https://github.com/vietnguyenhoangw/ani-mime/blob/main/LICENSE"><img src="https://img.shields.io/github/license/vietnguyenhoangw/ani-mime?style=for-the-badge" alt="License"></a>
+  <a href="https://github.com/vietnguyenhoangw/ani-mime/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-vietnguyenhoangw-8b5cf6?style=for-the-badge" alt="License"></a>
   <img src="https://img.shields.io/badge/Platform-macOS-000000?style=for-the-badge&logo=apple" alt="Platform">
-  <img src="https://img.shields.io/badge/Built%20with-Rust%20%26%20Tauri-orange?style=for-the-badge&logo=rust" alt="Built with Rust">
 </p>
 
 <p align="center">
@@ -88,16 +87,6 @@ source ~/.zshrc
 - **macOS** (Intel or Apple Silicon)
 - **zsh** (default shell on macOS)
 - **Claude Code** (optional) — for Claude activity tracking
-
-## Architecture
-
-```
-Zsh Hooks ──HTTP:1234──> Rust Server ──Tauri Events──> React UI
-                              |
-Claude Code Hooks ────────────┘
-```
-
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for full details.
 
 ## Tech Stack
 
