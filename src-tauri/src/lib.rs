@@ -67,6 +67,9 @@ pub fn run() {
                 current_ui: "searching".to_string(),
                 idle_since: 0,
                 sleeping: false,
+                peers: HashMap::new(),
+                visitors: Vec::new(),
+                visiting: None,
             }));
 
             server::start_http_server(app.handle().clone(), app_state.clone());
