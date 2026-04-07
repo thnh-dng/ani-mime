@@ -12,6 +12,7 @@ export const pets: PetInfo[] = [
       idle: { file: "Sittiing.png", frames: 8 },
       searching: { file: "RottweilerIdle.png", frames: 6 },
       initializing: { file: "RottweilerIdle.png", frames: 6 },
+      visiting: { file: "Sittiing.png", frames: 8 },
     },
   },
   {
@@ -25,6 +26,7 @@ export const pets: PetInfo[] = [
       idle: { file: "DalmatianSitting.png", frames: 8 },
       searching: { file: "DalmatianIdle.png", frames: 7 },
       initializing: { file: "DalmatianIdle.png", frames: 7 },
+      visiting: { file: "DalmatianSitting.png", frames: 8 },
     },
   },
 ];

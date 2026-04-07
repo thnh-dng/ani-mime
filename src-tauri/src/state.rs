@@ -8,6 +8,25 @@ pub struct TaskCompleted {
     pub duration_secs: u64,
 }
 
+/// A peer discovered via mDNS on the local network.
+#[derive(Clone, Serialize)]
+pub struct PeerInfo {
+    pub instance_name: String,
+    pub nickname: String,
+    pub pet: String,
+    pub ip: String,
+    pub port: u16,
+}
+
+/// A dog currently visiting this screen.
+#[derive(Clone, Serialize)]
+pub struct VisitingDog {
+    pub pet: String,
+    pub nickname: String,
+    pub arrived_at: u64,
+    pub duration_secs: u64,
+}
+
 /// Per-shell session state.
 #[derive(Clone)]
 pub struct Session {
@@ -43,6 +62,10 @@ pub struct AppState {
     pub idle_since: u64,
     /// True when idle countdown triggered sleep. Only busy/service wakes up.
     pub sleeping: bool,
+    // --- Peer visits ---
+    pub peers: HashMap<String, PeerInfo>,
+    pub visitors: Vec<VisitingDog>,
+    pub visiting: Option<String>,
 }
 
 /// Picks the "winning" UI state across all sessions.
