@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.13.25] - 2026-04-07
+
+### Added
+- Speech bubble notifications on task completion with random fun messages
+- Welcome bubble greeting on first "Free" status after app launch
+- Neon glow effects on status pill: green pulse on task done, red pulse when busy
+- Idle-to-sleep countdown: pet sleeps after 2 minutes of inactivity, wakes on real work
+- Speech bubble toggle in Settings > General > Behavior with macOS-style switch
+- Theme-aware bubble styling (grey bubble in dark mode, white in light mode)
+- `busy_since` tracking for task duration measurement
+- `task-completed` Tauri event emitted on busy→idle transition
+
+### Fixed
+- Claude Code (pid=0) sessions no longer expire prematurely during long tasks
+- Heartbeats now keep busy sessions alive (long-running commands stay as "Working...")
+- Fixed "Initializing..." flashing to "Sleep" on first app launch
+- Widened mascot window (140→200px) to prevent speech bubble text clipping
+
+### Changed
+- Mascot window size increased to 200x190 for bubble space
+- Status pill vertical padding reduced (8→6px) for tighter layout
+- Added spacing between mascot and status pill
+
 ## [0.13.19] - 2026-04-04
 
 ### Added
