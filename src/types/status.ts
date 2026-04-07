@@ -4,7 +4,8 @@ export type Status =
   | "idle"
   | "busy"
   | "service"
-  | "disconnected";
+  | "disconnected"
+  | "visiting";
 
 export interface SpriteConfig {
   file: string;

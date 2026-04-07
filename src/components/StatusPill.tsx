@@ -13,6 +13,7 @@ const dotClassMap: Record<Status, string> = {
   disconnected: "dot disconnected",
   initializing: "dot initializing",
   searching: "dot searching",
+  visiting: "dot visiting",
 };
 
 const labelMap: Record<Status, string> = {
@@ -22,6 +23,7 @@ const labelMap: Record<Status, string> = {
   disconnected: "Sleep",
   initializing: "Initializing...",
   searching: "Searching...",
+  visiting: "Visiting...",
 };
 
 export function StatusPill({ status, glow }: StatusPillProps) {
