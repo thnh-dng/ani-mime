@@ -12,16 +12,98 @@ mod watchdog;
 
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 use tauri::menu::{MenuBuilder, SubmenuBuilder, PredefinedMenuItem, MenuItemBuilder};
 
 use crate::state::AppState;
+
+const VISIT_DURATION_SECS: u64 = 15;
+
+#[tauri::command]
+fn start_visit(
+    peer_id: String,
+    nickname: String,
+    pet: String,
+    state: tauri::State<'_, Arc<Mutex<AppState>>>,
+    app: tauri::AppHandle,
+) -> Result<(), String> {
+    let (ip, port) = {
+        let st = state.lock().unwrap();
+
+        // Already visiting someone
+        if st.visiting.is_some() {
+            return Err("Already visiting someone".to_string());
+        }
+
+        let peer = st.peers.get(&peer_id)
+            .ok_or("Peer not found")?;
+        (peer.ip.clone(), peer.port)
+    };
+
+    // Send visit request to peer
+    let body = serde_json::json!({
+        "pet": pet,
+        "nickname": nickname,
+        "duration_secs": VISIT_DURATION_SECS,
+    });
+
+    let url = format!("http://{}:{}/visit", ip, port);
+
+    // Send the HTTP request in a thread to avoid blocking
+    let send_result = std::thread::spawn({
+        let url = url.clone();
+        let body = body.clone();
+        move || {
+            ureq::post(&url)
+                .send_json(&body)
+                .map(|_| ())
+                .map_err(|e| e.to_string())
+        }
+    }).join().map_err(|_| "Thread panicked".to_string())?;
+
+    send_result.map_err(|e| format!("Failed to send visit: {}", e))?;
+
+    // Mark ourselves as visiting
+    {
+        let mut st = state.lock().unwrap();
+        st.visiting = Some(peer_id.clone());
+    }
+    let _ = app.emit("dog-away", true);
+
+    // Schedule return after VISIT_DURATION_SECS
+    let state_clone = state.inner().clone();
+    let app_clone = app.clone();
+    let nickname_clone = nickname.clone();
+    std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_secs(VISIT_DURATION_SECS));
+
+        // Send visit-end to peer
+        let end_body = serde_json::json!({ "nickname": nickname_clone });
+        if let Ok(peer_info) = {
+            let st = state_clone.lock().unwrap();
+            st.peers.get(&peer_id).cloned().ok_or(())
+        } {
+            let end_url = format!("http://{}:{}/visit-end", peer_info.ip, peer_info.port);
+            let _ = ureq::post(&end_url).send_json(&end_body);
+        }
+
+        // Dog comes home
+        let mut st = state_clone.lock().unwrap();
+        st.visiting = None;
+        drop(st);
+        let _ = app_clone.emit("dog-away", false);
+        eprintln!("[visit] dog returned home");
+    });
+
+    Ok(())
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
+        .invoke_handler(tauri::generate_handler![start_visit])
         .setup(|app| {
             platform::macos::setup_macos_window(app);
 
@@ -72,6 +154,8 @@ pub fn run() {
                 visitors: Vec::new(),
                 visiting: None,
             }));
+
+            app.manage(app_state.clone());
 
             server::start_http_server(app.handle().clone(), app_state.clone());
             watchdog::start_watchdog(app.handle().clone(), app_state.clone());
