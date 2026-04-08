@@ -20,11 +20,11 @@ export function Settings() {
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  // Dev mode is session-only: always starts off, cleared on app restart
   useLayoutEffect(() => {
-    load("settings.json").then((store) => {
-      store.get<boolean>("devMode").then((saved) => {
-        setDevMode(saved ?? false);
-      });
+    load("settings.json").then(async (store) => {
+      await store.set("devMode", false);
+      await store.save();
     });
   }, []);
 
@@ -37,9 +37,6 @@ export function Settings() {
     if (clickCountRef.current >= 10) {
       clickCountRef.current = 0;
       setDevMode(true);
-      const store = await load("settings.json");
-      await store.set("devMode", true);
-      await store.save();
       await emit("dev-mode-changed", true);
     } else {
       clickTimerRef.current = setTimeout(() => {
