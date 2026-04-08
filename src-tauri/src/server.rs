@@ -7,7 +7,7 @@ use crate::state::{emit_if_changed, AppState, Session, TaskCompleted};
 pub fn start_http_server(app_handle: tauri::AppHandle, app_state: Arc<Mutex<AppState>>) {
     std::thread::spawn(move || {
         let port = get_port();
-        let addr = format!("127.0.0.1:{}", port);
+        let addr = format!("0.0.0.0:{}", port);
         let server = match tiny_http::Server::http(&addr) {
             Ok(s) => s,
             Err(e) => {
