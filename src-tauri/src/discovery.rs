@@ -43,7 +43,8 @@ pub fn start_discovery(
             "",
             port,
             &properties[..],
-        ).expect("Failed to create ServiceInfo");
+        ).expect("Failed to create ServiceInfo")
+         .enable_addr_auto();
 
         mdns.register(service_info.clone())
             .expect("Failed to register mDNS service");
